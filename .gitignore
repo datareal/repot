@@ -1,4 +1,5 @@
-## Golang section 
+# Serverless directories
+.serverless
 
 # golang output binary directory
 dist
