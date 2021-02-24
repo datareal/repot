@@ -1,0 +1,37 @@
+service: datareal-repot
+frameworkVersion: ^2.25
+
+provider:
+  name: aws
+  runtime: go1.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:ListBucket"
+#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:PutObject"
+#      Resource:
+#        Fn::Join:
+#          - ""
+#          - - "arn:aws:s3:::"
+#            - "Ref" : "ServerlessDeploymentBucket"
+#            - "/*"
+
+package:
+  exclude:
+    - ./**
+  include:
+    - ./dist/**
+
+functions:
+  share:
+    handler: dist/lambda/share
+    events:
+      - httpApi:
+          path: /share
+          method: post
