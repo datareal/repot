@@ -7,8 +7,10 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
+// Response is used in our lambda functions to define APIGateway Response
 type Response events.APIGatewayProxyResponse
 
+// CreateResponse is used to create a response to the received request
 func CreateResponse(message string, responseStatusCode int) (Response, error) {
 	var buf bytes.Buffer
 
