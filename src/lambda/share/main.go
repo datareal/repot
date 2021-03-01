@@ -1,17 +1,18 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"encoding/base64"
+	"fmt"
+	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 
 	"github.com/datareal/repot/src/modules"
 )
 
+// Handler is used by lambda start which start our code
 func Handler(request modules.Request) (modules.Response, error) {
-	// Verify if the request.Body is base64 
+	// Verify if the request.Body is base64
 	// if it is return an error requesting to add
 	// 'content-type': 'application/json' to the header
 	_, decodeErr := base64.StdEncoding.DecodeString(request.Body)
