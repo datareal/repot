@@ -1,6 +1,9 @@
 service: datareal-repot
 frameworkVersion: ^2.25
 
+plugins:
+  - serverless-prune-plugin
+
 provider:
   name: aws
   runtime: go1.x
@@ -60,6 +63,9 @@ functions:
           method: post
 
 custom:
+  prune:
+    automatic: true
+    number: 3
   crawlerReportsTableName: "datareal-crawler-reports"
   crawlerReportsTableArn:
     Fn::Join:
