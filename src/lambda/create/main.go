@@ -73,11 +73,11 @@ func Handler(request modules.Request) (modules.Response, error) {
 	}
 
 	var ResponseMessage = createMessageString(message{
-		Title:      fmt.Sprintf("*Report Crawler* - %s", requestTarget.Date),
-		RealEstate: fmt.Sprintf("*Real Estate*: %s", requestTarget.Domain),
-		Quantity:   fmt.Sprintf("*Quantity*: %d", len(items)),
-		UpdateQtd:  fmt.Sprintf("*Updated Quantity*: %d", updated),
-		AddedQtd:   fmt.Sprintf("*Added Quantity*: %d", added),
+		Title:      fmt.Sprintf("*Report crawler* - %s", requestTarget.Date),
+		RealEstate: fmt.Sprintf("*Imobiliária*: %s", requestTarget.Domain),
+		Quantity:   fmt.Sprintf("*Quantidade de imóveis*: %d", len(items)),
+		UpdateQtd:  fmt.Sprintf("*Quantidade atualizada*: %d", updated),
+		AddedQtd:   fmt.Sprintf("*Quantidade adicionada*: %d", added),
 	})
 
 	return modules.CreateResponse(modules.ResponseMessage{
