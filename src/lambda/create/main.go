@@ -61,12 +61,23 @@ func Handler(request modules.Request) (modules.Response, error) {
 	fmt.Println("Items: ", items)
 	fmt.Println("Items Len: ", len(items))
 
+	var updated int = 0
+	var added int = 0
+
+	for _, item := range items {
+		if item.State == "UPDATED" {
+			updated++
+		} else {
+			added++
+		}
+	}
+
 	var ResponseMessage = createMessageString(message{
 		Title:      fmt.Sprintf("*Report Crawler* - %s", requestTarget.Date),
 		RealEstate: fmt.Sprintf("*Real Estate*: %s", requestTarget.Domain),
 		Quantity:   fmt.Sprintf("*Quantity*: %d", len(items)),
-		UpdateQtd:  fmt.Sprintf("*Updated Quantity*: %s", "10"),
-		AddedQtd:   fmt.Sprintf("*Added Quantity*: %s", "10"),
+		UpdateQtd:  fmt.Sprintf("*Updated Quantity*: %d", updated),
+		AddedQtd:   fmt.Sprintf("*Added Quantity*: %d", added),
 	})
 
 	return modules.CreateResponse(modules.ResponseMessage{
