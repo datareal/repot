@@ -9,6 +9,8 @@ provider:
   runtime: go1.x
   lambdaHashingVersion: 20201221
   stage: dev
+  environment:
+    SLACK_WEBHOOK_REPORTS: ${env:SLACK_WEBHOOK_REPORTS}
   iam:
     role:
       statements:
