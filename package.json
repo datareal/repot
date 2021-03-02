@@ -1,0 +1,22 @@
+{
+  "name": "repot",
+  "productName": "Datareal Repot",
+  "version": "0.0.1",
+  "author": {
+    "name": "Datareal"
+  },
+  "license": "MIT",
+  "description": "Report robot for Datareal Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datareal/repot.git"
+  },
+  "scripts": {
+    "public:deploy": "yarn run _private:build && yarn run _private:deploy",
+    "_private:build": "make clean_lambda && make build",
+    "_private:deploy": "serverless deploy --verbose"
+  },
+  "dependencies": {
+    "serverless": "^2.28.0"
+  }
+}
