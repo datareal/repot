@@ -66,7 +66,7 @@ func Handler(request modules.Request) (modules.Response, error) {
 		RealEstate: fmt.Sprintf("*Real Estate*: %s", requestTarget.Domain),
 		Quantity:   fmt.Sprintf("*Quantity*: %d", len(items)),
 		UpdateQtd:  fmt.Sprintf("*Updated Quantity*: %s", "10"),
-		AddedQtd:   fmt.Sprintf("*Added Quantity: %s", "10"),
+		AddedQtd:   fmt.Sprintf("*Added Quantity*: %s", "10"),
 	})
 
 	return modules.CreateResponse(modules.ResponseMessage{
