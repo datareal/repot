@@ -22,7 +22,7 @@ func PostRequest(message string, SlackWebhook string) (string, int) {
 		return "Error when creating the Slack form", 500
 	}
 
-	resp, err := http.Post(SlackWebhook, "application/json", bytes.NewBuffer(bytesRepresentation))
+	_, err = http.Post(SlackWebhook, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		fmt.Println("http:Post::Error: ", err)
 		return "Error when making the POST request to the Slack Webhook URL", 500
