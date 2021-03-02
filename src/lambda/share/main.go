@@ -17,17 +17,23 @@ func Handler(request modules.Request) (modules.Response, error) {
 	// 'content-type': 'application/json' to the header
 	_, decodeErr := base64.StdEncoding.DecodeString(request.Body)
 	if decodeErr == nil {
-		return modules.CreateResponse("Failed to create the Request body, try setting 'Content-Type': 'application/json' on your request header.", 500)
+		return modules.CreateResponse(modules.ResponseMessage{
+			Message: "Failed to create the Request body, try setting 'Content-Type': 'application/json' on your request header.",
+		}, 500)
 	}
 
 	_, ok := os.LookupEnv("SLACK_WEEBHOOK_REPORTS")
 	if !ok {
-		return modules.CreateResponse("Failed loading Slack Webhook URL", 500)
+		return modules.CreateResponse(modules.ResponseMessage{
+			Message: "Failed loading Slack Webhook URL",
+		}, 500)
 	}
 
 	fmt.Println("Received body: ", request.Body)
 
-	return modules.CreateResponse("Message sent successfuly!", 200)
+	return modules.CreateResponse(modules.ResponseMessage{
+		Message: "Message sent successfuly!",
+	}, 200)
 }
 
 func main() {
