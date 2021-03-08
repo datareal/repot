@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -12,29 +14,17 @@ const tableName = "datareal-crawler-reports"
 
 var database = dynamodb.New(session.New(), aws.NewConfig().WithRegion(awsRegion))
 
-// Item is the iten structure from DynamoDB `datareal-crawler-reports` table
+// Item is the item structure from DynamoDB `datareal-crawler-reports` table
 type Item struct {
-	ID         string `json:"id"`
-	RealEstate string `json:"real_estate"`
-	URL        string `json:"url"`
-	Date       string `json:"date"`
-	State      string `json:"state"`
+	State string `json:"state"`
 }
 
-// QueryItems retrieves all the item_reports from the DB following the query
-func QueryItems(Domain string, Date string) ([]Item, error) {
+func queryItems(Date string, LastEvaluatedKey map[string]*dynamodb.AttributeValue) ([]Item, map[string]*dynamodb.AttributeValue, error) {
 	var queryInput = &dynamodb.QueryInput{
-		TableName: aws.String(tableName),
-		IndexName: aws.String("real_estate-date-index"),
+		TableName:         aws.String(tableName),
+		IndexName:         aws.String("date-index"),
+		ExclusiveStartKey: LastEvaluatedKey,
 		KeyConditions: map[string]*dynamodb.Condition{
-			"real_estate": {
-				ComparisonOperator: aws.String("EQ"),
-				AttributeValueList: []*dynamodb.AttributeValue{
-					{
-						S: aws.String(Domain),
-					},
-				},
-			},
 			"date": {
 				ComparisonOperator: aws.String("EQ"),
 				AttributeValueList: []*dynamodb.AttributeValue{
@@ -48,19 +38,44 @@ func QueryItems(Domain string, Date string) ([]Item, error) {
 
 	var response, err = database.Query(queryInput)
 	if err != nil {
-		return []Item{}, err
+		return []Item{}, nil, err
 	}
 	if len(response.Items) == 0 {
-		return []Item{}, nil
+		return []Item{}, nil, nil
 	}
+	fmt.Println("LastEvaluatedKey from query is", response.LastEvaluatedKey)
 
 	var items []Item
 	err = dynamodbattribute.UnmarshalListOfMaps(response.Items, &items)
 	if err != nil {
-		return []Item{}, err
+		return []Item{}, nil, err
 	}
 
-	return items, nil
+	return items, response.LastEvaluatedKey, nil
+}
+
+// QueryAll retrieves all the item_reports from the DB following the query
+func QueryAll(Date string) ([]Item, error) {
+	var result []Item
+	var PaginationDone bool = false
+	var ExclusiveStartKey map[string]*dynamodb.AttributeValue = nil
+
+	for !PaginationDone {
+		items, LastEvaluatedKey, err := queryItems(Date, ExclusiveStartKey)
+		if err != nil {
+			return []Item{}, err
+		}
+		result = append(result, items...)
+
+		if LastEvaluatedKey == nil {
+			fmt.Println("The final result lenght is", len(result))
+			PaginationDone = true
+		} else {
+			ExclusiveStartKey = LastEvaluatedKey
+		}
+	}
+
+	return result, nil
 }
 
 // ScanItems retrieves all the items from the desired table
