@@ -13,8 +13,7 @@ import (
 )
 
 type repotTarget struct {
-	Domain string `json:"real_estate"`
-	Date   string `json:"date"`
+	Date string `json:"date"`
 }
 
 type message struct {
@@ -51,19 +50,17 @@ func Handler(request modules.Request) (modules.Response, error) {
 
 	fmt.Println("Creating message for ", requestTarget)
 
-	items, err := database.QueryItems(requestTarget.Domain, requestTarget.Date)
+	items, err := database.QueryAll(requestTarget.Date)
 	if err != nil {
 		fmt.Println("Error:queryItems ", err)
 		return modules.CreateResponse(modules.ResponseMessage{
 			Message: "Error when creating the message",
 		}, 500)
 	}
-	fmt.Println("Items: ", items)
 	fmt.Println("Items Len: ", len(items))
 
 	var updated int = 0
 	var added int = 0
-
 	for _, item := range items {
 		if item.State == "UPDATED" {
 			updated++
@@ -73,11 +70,10 @@ func Handler(request modules.Request) (modules.Response, error) {
 	}
 
 	var ResponseMessage = createMessageString(message{
-		Title:      fmt.Sprintf("*Report crawler* - %s", requestTarget.Date),
-		RealEstate: fmt.Sprintf("*Imobiliária*: %s", requestTarget.Domain),
-		Quantity:   fmt.Sprintf("*Quantidade de imóveis*: %d", len(items)),
-		UpdateQtd:  fmt.Sprintf("*Quantidade atualizada*: %d", updated),
-		AddedQtd:   fmt.Sprintf("*Quantidade adicionada*: %d", added),
+		Title:     fmt.Sprintf("*Report crawler* - %s", requestTarget.Date),
+		Quantity:  fmt.Sprintf("*Quantidade de imóveis*: %d", len(items)),
+		UpdateQtd: fmt.Sprintf("*Quantidade atualizada*: %d", updated),
+		AddedQtd:  fmt.Sprintf("*Quantidade adicionada*: %d", added),
 	})
 
 	return modules.CreateResponse(modules.ResponseMessage{
