@@ -4,6 +4,8 @@ frameworkVersion: ^2.25
 plugins:
   - serverless-prune-plugin
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: go1.x
@@ -18,31 +20,17 @@ provider:
           Action:
             - dynamodb:Scan
           Resource:
-            - ${self:custom.crawlerReportsTableArn}
-        - Effect: Allow
-          Action:
-            - dynamodb:Query
-          Resource:
-            - ${self:custom.crawlerReportsTableArn}
-            - Fn::Join:
-              - "/"
-              -
-                - ${self:custom.crawlerReportsTableArn}
-                - "index/*"
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+            - ${self:custom.crawlerUniqueRawdataTableArn}
+        # - Effect: Allow
+        #   Action:
+        #     - dynamodb:Query
+        #   Resource:
+        #     - ${self:custom.crawlerRawdataTableArn}
+        #     - Fn::Join:
+        #       - "/"
+        #       -
+        #         - ${self:custom.crawlerRawdataTableArn}
+        #         - "index/*"
 
 package:
   exclude:
@@ -59,17 +47,14 @@ functions:
           method: post
   create:
     handler: dist/lambda/create
-    events:
-      - httpApi:
-          path: /create
-          method: post
+    timeout: 900
 
 custom:
   prune:
     automatic: true
     number: 3
-  crawlerReportsTableName: "datareal-crawler-reports"
-  crawlerReportsTableArn:
+  crawlerUniqueRawdataTableName: "datareal-crawler-unique-rawdata"
+  crawlerUniqueRawdataTableArn:
     Fn::Join:
     - ":"
     - - arn
@@ -77,4 +62,4 @@ custom:
       - dynamodb
       - Ref: AWS::Region
       - Ref: AWS::AccountId
-      - table/${self:custom.crawlerReportsTableName}
+      - table/${self:custom.crawlerUniqueRawdataTableName}
